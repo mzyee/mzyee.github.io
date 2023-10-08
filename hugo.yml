@@ -1,7 +1,8 @@
-baseURL: 'https://example.org/'
+baseURL: 'https://zheyu.github.io'
 languageCode: 'zh'
 title: "MZY's Blog"
 theme: "PaperMod"
+publishDir: "docs"
 
 paginate: 5
 
