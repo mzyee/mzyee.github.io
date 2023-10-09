@@ -5,7 +5,17 @@
     <link>https://mzyee.github.io/</link>
     <description>Recent content on MZY&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language><atom:link href="https://mzyee.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh</language>
+    <lastBuildDate>Mon, 09 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>通过eBPF工具进行性能分析</title>
+      <link>https://mzyee.github.io/posts/usebpf/</link>
+      <pubDate>Mon, 09 Oct 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://mzyee.github.io/posts/usebpf/</guid>
+      <description>Learn About eBPF Usages</description>
+    </item>
+    
     <item>
       <title></title>
       <link>https://mzyee.github.io/contact/</link>

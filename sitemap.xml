@@ -2,18 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://mzyee.github.io/tags/bpf/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/tags/performance/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/tags/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/usebpf/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://mzyee.github.io/contact/</loc>
   </url><url>
     <loc>https://mzyee.github.io/archives/</loc>
   </url><url>
     <loc>https://mzyee.github.io/categories/</loc>
   </url><url>
-    <loc>https://mzyee.github.io/</loc>
-  </url><url>
     <loc>https://mzyee.github.io/search/</loc>
   </url><url>
     <loc>https://mzyee.github.io/series/</loc>
-  </url><url>
-    <loc>https://mzyee.github.io/tags/</loc>
   </url>
 </urlset>
