@@ -6,7 +6,16 @@
     <description>Recent content on MZY&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 13 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>InnoDB Purge System 相关代码学习</title>
+      <link>https://mzyee.github.io/posts/mysql/purge/</link>
+      <pubDate>Mon, 23 Oct 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://mzyee.github.io/posts/mysql/purge/</guid>
+      <description>InnoDB Purge System 相关代码学习</description>
+    </item>
+    
     <item>
       <title>InnoDB Undo Log 相关代码学习</title>
       <link>https://mzyee.github.io/posts/mysql/undo/</link>
