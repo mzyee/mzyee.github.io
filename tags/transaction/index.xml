@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>transaction on MZY&#39;s Blog</title>
+    <link>https://mzyee.github.io/tags/transaction/</link>
+    <description>Recent content in transaction on MZY&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Mon, 30 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/tags/transaction/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>InnoDB 事务系统和事务流程</title>
+      <link>https://mzyee.github.io/posts/mysql/trx/</link>
+      <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://mzyee.github.io/posts/mysql/trx/</guid>
+      <description>InnoDB 事务系统和事务流程代码学习</description>
+    </item>
+    
+  </channel>
+</rss>
