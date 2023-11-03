@@ -17,15 +17,6 @@
     </item>
     
     <item>
-      <title>InnoDB 事务系统和事务流程</title>
-      <link>https://mzyee.github.io/posts/mysql/trx/</link>
-      <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://mzyee.github.io/posts/mysql/trx/</guid>
-      <description>InnoDB 事务系统和事务流程代码学习</description>
-    </item>
-    
-    <item>
       <title>InnoDB Purge System 代码学习</title>
       <link>https://mzyee.github.io/posts/mysql/purge/</link>
       <pubDate>Mon, 23 Oct 2023 00:00:00 +0000</pubDate>
