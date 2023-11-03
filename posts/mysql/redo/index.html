@@ -559,7 +559,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>   其中比较关键的阶段在于 Step 11 <code>recv_recovery_from_checkpoint_start</code> 中进行 redo 恢复以及 Step 16 恢复 undo 和 trx 系统的状态，后者在 undo 系统的讨论中进行介绍，本文主要讨论前者。</p>
+</div><p>   其中比较关键的阶段在于 Step 11 <code>recv_recovery_from_checkpoint_start</code> 中进行 redo 恢复以及 Step 16 恢复 undo 和 trx 系统的状态，后者在 <a href="/posts/mysql/undo">undo 系统</a>的讨论中进行介绍，本文主要讨论前者。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
