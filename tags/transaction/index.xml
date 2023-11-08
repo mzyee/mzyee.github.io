@@ -8,7 +8,7 @@
     <language>zh</language>
     <lastBuildDate>Mon, 30 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/tags/transaction/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>InnoDB 事务系统和事务流程</title>
+      <title>InnoDB 事务系统和事务执行流程</title>
       <link>https://mzyee.github.io/posts/mysql/trx/</link>
       <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
       
