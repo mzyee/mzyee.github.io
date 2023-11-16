@@ -8,16 +8,16 @@
     <language>zh</language>
     <lastBuildDate>Sun, 05 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>dictionary</title>
-      <link>https://mzyee.github.io/tags/dictionary/</link>
+      <title>DD</title>
+      <link>https://mzyee.github.io/tags/dd/</link>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://mzyee.github.io/tags/dictionary/</guid>
+      <guid>https://mzyee.github.io/tags/dd/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>mysql</title>
+      <title>MySQL</title>
       <link>https://mzyee.github.io/tags/mysql/</link>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
       
@@ -26,7 +26,7 @@
     </item>
     
     <item>
-      <title>redo</title>
+      <title>Redo</title>
       <link>https://mzyee.github.io/tags/redo/</link>
       <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
       
@@ -35,7 +35,7 @@
     </item>
     
     <item>
-      <title>transaction</title>
+      <title>Transaction</title>
       <link>https://mzyee.github.io/tags/transaction/</link>
       <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
       
@@ -44,7 +44,7 @@
     </item>
     
     <item>
-      <title>undo</title>
+      <title>Undo</title>
       <link>https://mzyee.github.io/tags/undo/</link>
       <pubDate>Mon, 23 Oct 2023 00:00:00 +0000</pubDate>
       
@@ -62,7 +62,7 @@
     </item>
     
     <item>
-      <title>performance</title>
+      <title>Performance</title>
       <link>https://mzyee.github.io/tags/performance/</link>
       <pubDate>Mon, 09 Oct 2023 00:00:00 +0000</pubDate>
       
