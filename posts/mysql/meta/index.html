@@ -153,7 +153,7 @@
         <div class="logo">
             <a href="https://mzyee.github.io" accesskey="h" title="MZY&#39;s Blog (Alt + H)">
                 <img src="https://mzyee.github.io/img/eye.jpeg" alt="" aria-label="logo"
-                    height="30">MZY&#39;s Blog</a>
+                    height="33">MZY&#39;s Blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -210,7 +210,7 @@
       MySQL 如何准备开启一个表
     </h1>
     <div class="post-meta"><span title='2023-11-05 00:00:00 +0000 UTC'>十一月 5, 2023</span>&nbsp;·&nbsp;6 分钟&nbsp;·&nbsp;Miao Zheyu
-      &nbsp;|&nbsp;Tags: &nbsp;
+      &nbsp;|&nbsp;📖 &nbsp;
       <ul class="post-tags-meta">
         <a href="https://mzyee.github.io/tags/mysql/">MySQL</a>
         <a href="https://mzyee.github.io/tags/dd/">&nbsp;DD</a>
@@ -839,6 +839,23 @@ graph TD;
 </nav>
 
   </footer>
+<div>
+  <div class="pagination__title">
+    <span class="pagination__title-h" style="font-size: 20px;">💬 评论</span>
+    <hr />
+  </div>
+  <div id="tcomment"></div>
+  <script src="https://cdn.staticfile.org/twikoo/1.6.25/twikoo.all.min.js"></script>
+  <script>
+    twikoo.init({
+      envId: "https://xxx.netlify.app/.netlify/functions/twikoo",  
+      el: "#tcomment",
+      lang: 'zh-CN',
+      region: 'ap-hongkong',
+      path: window.TWIKOO_MAGIC_PATH || window.location.pathname,
+    });
+  </script>
+</div>
 </article>
     </main>
     
