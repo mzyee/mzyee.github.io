@@ -10,7 +10,7 @@
 <meta name="description" content="MySQL 元信息管理及开表流程代码学习">
 <meta name="author" content="Miao Zheyu">
 <link rel="canonical" href="https://mzyee.github.io/posts/mysql/meta/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.4f68b80af0db3eb7759a35d1bff637bffd115ac309cb14b149caeeb1b7149650.css" integrity="sha256-T2i4CvDbPrd1mjXRv/Y3v/0RWsMJyxSxScrusbcUllA=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.78ed8947c1508d00bdf7a3061370dcaebcd4ba680f4567ec440d26a4043b4e64.css" integrity="sha256-eO2JR8FQjQC996MGE3DcrrzUumgPRWfsRA0mpAQ7TmQ=" rel="preload stylesheet" as="style">
 <script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
     onload="hljs.initHighlightingOnLoad();"></script>
 <link rel="icon" href="https://mzyee.github.io/favicon.ico">
@@ -151,9 +151,9 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://mzyee.github.io" accesskey="h" title="MZY&#39;s Blog (Alt + H)">
-                <img src="https://mzyee.github.io/img/eye.jpeg" alt="" aria-label="logo"
-                    height="33">MZY&#39;s Blog</a>
+            <a href="https://mzyee.github.io" accesskey="h" title=" MZY&#39;s Blog (Alt + H)">
+                <img src="https://mzyee.github.io/img/eye_img.gif" alt="" aria-label="logo"
+                    height="38"> MZY&#39;s Blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -342,7 +342,7 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>   对于某张用户表来说，其元数据就是通过这些系统表对应的行内容记录构成。各元数据表的逻辑关系可以近似看成是一颗树关联结构。其顶层入口是 table 表（mysql.tables）中的对应唯一记录，再通过记录的 table id 等索引项关联到如 columns、indexes 等各元数据系统表，进而获取这个表对应的所有元数据的记录内容。</p>
-<!-- <center><img src="DD_store.png" width="70%" /></center> -->
+<!-- <center><img loading="lazy" src="DD_store.png" width="70%" /></center> -->
 <div align=center>
 <div class="mermaid">
   
@@ -810,8 +810,7 @@ graph TD;
 <p>   从前面 <code>open_table</code>代码可见，获取 TABLE_SHARE 和构建 TABLE 实体对象过程中也涉及多层 cache 缓存机制。首先是 <code>Table_cache_manager</code> 缓存了 TABLE 对象，维护了所有正在使用或曾经打开过的 TABLE 对象，其大小由 table_cache_size 维护，内部按 THD 分片为 table_cache_instances 个 <code>Table_cache</code>。每个 <code>Table_cache</code> 内部由 object name（例如某张用户表） 映射到 <code>Table_cache_element</code>，可见 <code>Table_cache_element</code> 唯一对应一个 object，因此也唯一对应一个 TABLE_SHARE，其内部链接了这个缓存分片内中的所有由此 TABLE_SHARE 生成的 TABLE 实例。</p>
 <p>   如果 <code>Table_cache_manager</code> 缓存穿透，则会去 <code>Table_definition_cache</code> 缓存寻找是否有存在 TABLE_SHARE 对象，其大小设置为 <code>min(400 + table_cache_size / 2, 2000)</code>。 如果 <code>Table_definition_cache</code> 进一步穿透，则会去 InnoDB 层读取元数据构建 TABLE_SHARE。</p>
 <p>   另外，在 InnoDB 也为每一个 InnoDB 表加载一个数据字典对象，这些对象的集合就是 InnoDB 中的 data dictionary。InnoDB 的 dictionary system 以 全局 <code>dict_sys_t</code> 管理，而单个表对象对应 <code>dict_table_t</code>，类似的，索引对象对应 <code>dict_index_t</code>，列对象对应 <code>dict_col_t</code> 等。InnoDB 同样通过读取元数据表记录来构建 <code>dict_table_t</code> 对象，并且 <code>dict_sys_t</code> 中也有两个 <code>dict_table_t</code> 缓存，分别以 table name 和 table id 进行映射关联，其最大容量限制和 <code>Table_definition_cache</code> 一致。</p>
-<p><img loading="lazy" src="DD_cache.png" alt="DD_cache"  />
-</p>
+<center><img loading="lazy" src="DD_cache.png" width="100%" /></center>
 <hr>
 <!-- copyright -->
 <div class="admonition">
