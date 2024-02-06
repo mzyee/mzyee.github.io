@@ -2,25 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://mzyee.github.io/tags/lock/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/tags/mysql/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/mysql/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/mysql/lock/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/tags/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/tags/transaction/</loc>
+    <lastmod>2023-12-05T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://mzyee.github.io/tags/dd/</loc>
     <lastmod>2023-11-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mzyee.github.io/tags/mysql/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mzyee.github.io/posts/mysql/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://mzyee.github.io/posts/mysql/meta/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mzyee.github.io/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mzyee.github.io/posts/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mzyee.github.io/tags/</loc>
     <lastmod>2023-11-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://mzyee.github.io/posts/mysql/redo/</loc>
@@ -30,9 +39,6 @@
     <lastmod>2023-10-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://mzyee.github.io/tags/redo/</loc>
-    <lastmod>2023-10-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mzyee.github.io/tags/transaction/</loc>
     <lastmod>2023-10-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://mzyee.github.io/posts/mysql/purge/</loc>

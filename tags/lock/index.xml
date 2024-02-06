@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Lock on MZY&#39;s Blog</title>
+    <link>https://mzyee.github.io/tags/lock/</link>
+    <description>Recent content in Lock on MZY&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 05 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://mzyee.github.io/tags/lock/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL 事务锁系统</title>
+      <link>https://mzyee.github.io/posts/mysql/lock/</link>
+      <pubDate>Tue, 05 Dec 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://mzyee.github.io/posts/mysql/lock/</guid>
+      <description>MySQL 并发控制介绍和事务锁系统学习</description>
+    </item>
+    
+  </channel>
+</rss>
