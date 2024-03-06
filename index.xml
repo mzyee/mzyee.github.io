@@ -63,10 +63,10 @@
     
     <item>
       <title>通过 eBPF 工具进行性能分析</title>
-      <link>https://mzyee.github.io/posts/usebpf/</link>
+      <link>https://mzyee.github.io/posts/perf/ebpf/</link>
       <pubDate>Mon, 09 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://mzyee.github.io/posts/usebpf/</guid>
+      <guid>https://mzyee.github.io/posts/perf/ebpf/</guid>
       <description>Learning About eBPF Usages</description>
     </item>
     

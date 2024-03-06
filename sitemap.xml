@@ -59,7 +59,10 @@
     <loc>https://mzyee.github.io/tags/performance/</loc>
     <lastmod>2023-10-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mzyee.github.io/posts/usebpf/</loc>
+    <loc>https://mzyee.github.io/posts/perf/</loc>
+    <lastmod>2023-10-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://mzyee.github.io/posts/perf/ebpf/</loc>
     <lastmod>2023-10-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://mzyee.github.io/contact/</loc>
