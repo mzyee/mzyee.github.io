@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Online, Asynchronous Schema Change in F1 | MZY&#39;s Blog</title>
+<meta name="keywords" content="PaperRead">
+<meta name="description" content="Online, Asynchronous Schema Change in F1">
+<meta name="author" content="Miao Zheyu">
+<link rel="canonical" href="https://mzyee.github.io/posts/paper_read/f1_online_async_sc/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ede79fcb0b7cc17b893327a75ad3317eaac33d3fe4c0851c16c1d91847b6fd6d.css" integrity="sha256-7eefywt8wXuJMyenWtMxfqrDPT/kwIUcFsHZGEe2/W0=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://mzyee.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://mzyee.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://mzyee.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://mzyee.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://mzyee.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<meta property="og:title" content="Online, Asynchronous Schema Change in F1" />
+<meta property="og:description" content="Online, Asynchronous Schema Change in F1" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mzyee.github.io/posts/paper_read/f1_online_async_sc/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-08-11T15:10:12+08:00" />
+<meta property="article:modified_time" content="2024-08-11T15:10:12+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Online, Asynchronous Schema Change in F1"/>
+<meta name="twitter:description" content="Online, Asynchronous Schema Change in F1"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://mzyee.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Online, Asynchronous Schema Change in F1",
+      "item": "https://mzyee.github.io/posts/paper_read/f1_online_async_sc/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Online, Asynchronous Schema Change in F1",
+  "name": "Online, Asynchronous Schema Change in F1",
+  "description": "Online, Asynchronous Schema Change in F1",
+  "keywords": [
+    "PaperRead"
+  ],
+  "articleBody": "Online, Asynchronous Schema Change in F1\n1. 背景 分布式的 DBMS，底层数据层是共享的分布式 KV store（Spanner），中间层是 F1 servers 保存有 schema 信息并用于承接 client 请求 底层共享的 KV store 支持 get/put/del 操作，并且使用 OCC 实现分布式特性，使每个键-值对都有一个最近修改自动更新的时间戳，且多个 get 和 put 操作可以原子执行 当进行 online table schema 变更时，无法做到所有 F1 servers 的 schema 同步变更的（除非整个集群对应表停服），不同 F1 servers 的 schema 不同会导致 DML 应用多个 schemas 去操作底层共享 KV store，导致数据错乱 2. F1 Schema 变更协议 2.1 转移状态机 论文的变更协议就是为了解决在分布式数据库共享数据访问下在线、异步 schema 变更所带来的问题。其核心是：确保在任一时刻，系统使用的 schema 版本不超过两个，并且这些 schema 版本身具有特定的状态属性，不需要在变更时实现全局成员间的隐式或显式同步，也不需要在 DDL 完成后保留旧的 schema。\nF1 schema 内部包含 “tables, columns, indexes, constraints, and optimistic locks” 这些元素，其用作于关系型数据表和 KV 表间的映射。\nF1 将一次 schema 变更变为系列 schema 状态机转换，去避免 schema 变更产生的数据不一致，限定最多只有两个 schema 的原因也是为了使 schema 变更状态更有限。\nF1 把一次 schema 元素的变更拆解为多个逐步递进的中间状态，引入了两个中间状态，即 delete-only（只可删除的）和 write-only（只可写的）。同时，对于元素的非中间状态，定义为 absent（缺失的）和 public（共开的）。\n1 2 3 4 5 6 7 8 定义1: 一个只可删除的（Delete-only）元素E（tables/columns/indexes）的 KV 数据，不可以被其他事务读取； 并且： a）如果 schema 元素是一个 tables/columns，那么它只能够被 delete 操作修改； b）如果 schema 元素是一个 indexes，那么它只能够被 delete/update 操作修改，但是不能够 insert 新的 KV 数据。 定义2: 一个只可写的（Write-only）columns/indexes 的数据能够被 insert/delete/update 操作修改；但是这些数据不可以其他事务被读取。 定义3: 一个只可写的（Write-only）constraints 是对新写请求 insert/delete/update 应用的，但是不保证所有数据都满足约束。 2.2 状态一致性 任何从 schema S1 至 S2 的直接结构型元素变更，如果其添加或删除了一项 public schema 元素 E，此变更不能保持一致性。以添加 E 的情况，不论 E 是 table, column 或 index ，由 S2 定义的 insert 都将插入 S1 未定义的数据，经过 S1 的删除会导致 E 的数据残留，所以 S1 至 S2 的变更不能保持一致性。\n但是，如果其中间添加了一项 delete-only schema 元素 E 的状态将 S1 和 S2 分离，可以保证同时对于 S1 和 S2 状态避免孤立数据异常或完整性异常，进而此两两状态变更过程保持一致。更细节的说明见论文定义和证明，paper 就是花了很多理论来证明这个结论。\n当数据库在 schema（中间）状态能满足了上述定义约束后，通过这些状态去转移 schema 状态，分布式系统的数据与 schema 的一致性能够获得保证，\n所有类型 DDL 操作的状态转移总结为下图，其中：Optional 是指该 schema 元素是可选的，不一定需要存在的；Required 是指该 schema 元素是必须存在的。\n2.3 案例 文章中的例子：\n1 2 Add an index: absent(schema 中 index 不存在) --\u003e delete only --\u003e write only - (data reorg) --\u003e public(schema 中 index 可公开访问) 由于系统允许最多只有两个 schema，因此（对 index element）存在的中间状态集合只有:\n1 2 3 4 5 6 7 8 9 10 11 12 13 1) absent + delete only： 这一过程中完成 delete only 状态变更的节点，不再能够写入老结构元素，但同时这一过程不会新出现与此索引相关的任何数据记录； 2) delete only： 所有节点进入 delete only 状态，表明整个系统不会再新增出现任一相应老结构元素的数据记录，并且不再使用 absent 状态的 schema； 3) delete only + write only： 这一过程中完成 write only 状态变更的节点，开始出现新结构元素对应的数据记录，不会有 absent 的 schema 访问到不一致数据记录； 由于不再存在 absent 状态，所有 delete-only 和 write-only 状态的节点能够保证删除记录正确，不会有删除操作因为 schema 元素缺失而残留的索引元素记录； 4) write only + (data reorg) 因为前面 delete-only 的存在，保证了系统不会存在多余的索引元素记录；当所有 delete only 状态转移到 write only 状态，从这时起，所有节点的数据的变更都能正确地更新索引。 之后进入 data reorg 阶段，reorg 要做的就是取到当前时刻的 snapshot，为每条数据补写对应的索引记录。 reorg 开始之后数据可能发生变更，这种情况下底层 Spanner 提供的一致性能保证（时间戳判断），reorg 的写入操作要么失败（说明新数据已提前写入），要么被更新数据覆盖。 5) write only + public 节点对应 reorg 完成时，索引重建完成，进入 public 状态。 版权声明：如需转载或引用，请附加本文链接并注明来源。 ",
+  "wordCount" : "327",
+  "inLanguage": "zh",
+  "datePublished": "2024-08-11T15:10:12+08:00",
+  "dateModified": "2024-08-11T15:10:12+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "Miao Zheyu"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://mzyee.github.io/posts/paper_read/f1_online_async_sc/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MZY's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mzyee.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://mzyee.github.io" accesskey="h" title=" MZY&#39;s Blog (Alt + H)">
+                <img src="https://mzyee.github.io/img/eye.jpg" alt="" aria-label="logo"
+                    height="38"> MZY&#39;s Blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://mzyee.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://mzyee.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://mzyee.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://mzyee.github.io/contact" title="Links">
+                    <span>Links</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://mzyee.github.io">主页</a>&nbsp;»&nbsp;<a href="https://mzyee.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Online, Asynchronous Schema Change in F1
+    </h1>
+    <div class="post-meta"><span title='2024-08-11 15:10:12 +0800 CST'>八月 11, 2024</span>&nbsp;·&nbsp;2 分钟&nbsp;·&nbsp;Miao Zheyu
+      &nbsp;|&nbsp;📖 &nbsp;
+      <ul class="post-tags-meta">
+        <a href="https://mzyee.github.io/tags/paperread/">PaperRead</a>
+      </ul>&nbsp;|&nbsp;<a href="https://github.com/mzyee/mzyee.github.io" rel="noopener noreferrer" target="_blank">Suggestions</a>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details  open>
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">目录</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#1-%e8%83%8c%e6%99%af" aria-label="1. 背景">1. 背景</a></li>
+                    <li>
+                        <a href="#2-f1-schema-%e5%8f%98%e6%9b%b4%e5%8d%8f%e8%ae%ae" aria-label="2. F1 Schema 变更协议">2. F1 Schema 变更协议</a><ul>
+                            
+                    <li>
+                        <a href="#21-%e8%bd%ac%e7%a7%bb%e7%8a%b6%e6%80%81%e6%9c%ba" aria-label="2.1 转移状态机">2.1 转移状态机</a></li>
+                    <li>
+                        <a href="#22-%e7%8a%b6%e6%80%81%e4%b8%80%e8%87%b4%e6%80%a7" aria-label="2.2 状态一致性">2.2 状态一致性</a></li>
+                    <li>
+                        <a href="#23-%e6%a1%88%e4%be%8b" aria-label="2.3 案例">2.3 案例</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;
+    }
+</script>
+
+
+  <div class="post-content"><p><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/41376.pdf">Online, Asynchronous Schema Change in F1</a></p>
+<h3 id="1-背景">1. 背景<a hidden class="anchor" aria-hidden="true" href="#1-背景">#</a></h3>
+<center><img src="F1_arc.png" width="80%" /></center>
+<ol>
+<li>分布式的 DBMS，底层数据层是<strong>共享</strong>的分布式 KV store（Spanner），中间层是 F1 servers 保存有 schema 信息并用于承接 client 请求</li>
+<li>底层共享的 KV store 支持 get/put/del 操作，并且使用 OCC 实现分布式特性，使每个键-值对都有一个最近修改自动更新的时间戳，且多个 get 和 put 操作可以原子执行</li>
+<li>当进行 online table schema 变更时，无法做到所有 F1 servers 的 schema 同步变更的（除非整个集群对应表停服），<strong>不同 F1 servers 的 schema 不同</strong>会导致 DML 应用多个 schemas 去操作底层共享 KV store，导致数据错乱</li>
+</ol>
+<h3 id="2-f1-schema-变更协议">2. F1 Schema 变更协议<a hidden class="anchor" aria-hidden="true" href="#2-f1-schema-变更协议">#</a></h3>
+<h4 id="21-转移状态机">2.1 转移状态机<a hidden class="anchor" aria-hidden="true" href="#21-转移状态机">#</a></h4>
+<p>论文的变更协议就是为了解决在分布式数据库共享数据访问下在线、异步 schema 变更所带来的问题。其核心是：<strong>确保在任一时刻，系统使用的 schema 版本不超过两个，并且这些 schema 版本身具有特定的状态属性，不需要在变更时实现全局成员间的隐式或显式同步，也不需要在 DDL 完成后保留旧的 schema</strong>。</p>
+<p>F1 schema 内部包含 “tables, columns, indexes, constraints, and optimistic locks” 这些元素，其用作于关系型数据表和 KV 表间的映射。</p>
+<p>F1 将一次 schema 变更变为系列 schema 状态机转换，去避免 schema 变更产生的数据不一致，限定最多只有两个 schema 的原因也是为了使 schema 变更状态更有限。</p>
+<p>F1 把一次 schema 元素的变更拆解为多个逐步递进的中间状态，引入了两个中间状态，即 delete-only（只可删除的）和 write-only（只可写的）。同时，对于元素的非中间状态，定义为 absent（缺失的）和 public（共开的）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl">定义<span class="m">1</span><span class="o">:</span> 一个只可删除的（<span class="n">Delete</span><span class="o">-</span><span class="n">only</span>）元素<span class="n">E</span>（<span class="n">tables</span><span class="o">/</span><span class="n">columns</span><span class="o">/</span><span class="n">indexes</span>）的 <span class="n">KV</span> 数据，不可以被其他事务读取；
+</span></span><span class="line"><span class="cl">      并且：
+</span></span><span class="line"><span class="cl">      <span class="n">a</span>）如果 <span class="n">schema</span> 元素是一个 <span class="n">tables</span><span class="o">/</span><span class="n">columns</span>，那么它只能够被 <span class="n">delete</span> 操作修改；
+</span></span><span class="line"><span class="cl">      <span class="n">b</span>）如果 <span class="n">schema</span> 元素是一个 <span class="n">indexes</span>，那么它只能够被 <span class="n">delete</span><span class="o">/</span><span class="n">update</span> 操作修改，但是不能够 <span class="n">insert</span> 新的 <span class="n">KV</span> 数据。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">定义<span class="m">2</span><span class="o">:</span> 一个只可写的（<span class="n">Write</span><span class="o">-</span><span class="n">only</span>）<span class="n">columns</span><span class="o">/</span><span class="n">indexes</span> 的数据能够被 <span class="n">insert</span><span class="o">/</span><span class="n">delete</span><span class="o">/</span><span class="n">update</span> 操作修改；但是这些数据不可以其他事务被读取。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">定义<span class="m">3</span><span class="o">:</span> 一个只可写的（<span class="n">Write</span><span class="o">-</span><span class="n">only</span>）<span class="n">constraints</span> 是对新写请求 <span class="n">insert</span><span class="o">/</span><span class="n">delete</span><span class="o">/</span><span class="n">update</span> 应用的，但是不保证所有数据都满足约束。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="22-状态一致性">2.2 状态一致性<a hidden class="anchor" aria-hidden="true" href="#22-状态一致性">#</a></h4>
+<p>任何从 schema S1 至 S2 的<strong>直接结构型元素变更</strong>，如果其添加或删除了一项 public schema 元素 E，此变更不能保持一致性。以添加 E 的情况，不论 E 是 table, column 或 index ，由 S2 定义的 insert 都将插入 S1 未定义的数据，经过 S1 的删除会导致 E 的数据残留，所以 S1 至 S2 的变更不能保持一致性。</p>
+<p>但是，如果其中间添加了一项 delete-only schema 元素 E 的状态将 S1 和 S2 分离，可以保证同时对于 S1 和 S2 状态避免孤立数据异常或完整性异常，进而此两两状态变更过程保持一致。更细节的说明见论文定义和证明，paper 就是花了很多理论来证明这个结论。</p>
+<p>当数据库在 schema（中间）状态能满足了上述定义约束后，通过这些状态去转移 schema 状态，分布式系统的数据与 schema 的一致性能够获得保证，</p>
+<p>所有类型 DDL 操作的状态转移总结为下图，其中：Optional 是指该 schema 元素是可选的，不一定需要存在的；Required 是指该 schema 元素是必须存在的。</p>
+<center><img src="F1_ddl.png" width="100%" /></center>
+<h4 id="23-案例">2.3 案例<a hidden class="anchor" aria-hidden="true" href="#23-案例">#</a></h4>
+<p>文章中的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl"><span class="n">Add</span> <span class="n">an</span> <span class="n">index</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nf">absent</span><span class="p">(</span><span class="n">schema</span> 中 <span class="n">index</span> 不存在<span class="p">)</span> <span class="o">--&gt;</span> <span class="n">delete</span> <span class="n">only</span> <span class="o">--&gt;</span> <span class="n">write</span> <span class="n">only</span> <span class="o">-</span> <span class="p">(</span><span class="n">data</span> <span class="n">reorg</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="nf">public</span><span class="p">(</span><span class="n">schema</span> 中 <span class="n">index</span> 可公开访问<span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于系统允许最多只有两个 schema，因此（对 index element）存在的中间状态集合只有:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-r" data-lang="r"><span class="line"><span class="cl"><span class="m">1</span><span class="p">)</span> <span class="n">absent</span> <span class="o">+</span> <span class="n">delete</span> <span class="n">only</span>：
+</span></span><span class="line"><span class="cl">    这一过程中完成 <span class="n">delete</span> <span class="n">only</span> 状态变更的节点，不再能够写入老结构元素，但同时这一过程不会新出现与此索引相关的任何数据记录；
+</span></span><span class="line"><span class="cl"><span class="m">2</span><span class="p">)</span> <span class="n">delete</span> <span class="n">only</span>：
+</span></span><span class="line"><span class="cl">    所有节点进入 <span class="n">delete</span> <span class="n">only</span> 状态，表明整个系统不会再新增出现任一相应老结构元素的数据记录，并且不再使用 <span class="n">absent</span> 状态的 <span class="n">schema</span>；
+</span></span><span class="line"><span class="cl"><span class="m">3</span><span class="p">)</span> <span class="n">delete</span> <span class="n">only</span> <span class="o">+</span> <span class="n">write</span> <span class="n">only</span>：
+</span></span><span class="line"><span class="cl">    这一过程中完成 <span class="n">write</span> <span class="n">only</span> 状态变更的节点，开始出现新结构元素对应的数据记录，不会有 <span class="n">absent</span> 的 <span class="n">schema</span> 访问到不一致数据记录；
+</span></span><span class="line"><span class="cl">    由于不再存在 <span class="n">absent</span> 状态，所有 <span class="n">delete</span><span class="o">-</span><span class="n">only</span> 和 <span class="n">write</span><span class="o">-</span><span class="n">only</span> 状态的节点能够保证删除记录正确，不会有删除操作因为 <span class="n">schema</span> 元素缺失而残留的索引元素记录；
+</span></span><span class="line"><span class="cl"><span class="m">4</span><span class="p">)</span> <span class="n">write</span> <span class="n">only</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span> <span class="n">reorg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    因为前面 <span class="n">delete</span><span class="o">-</span><span class="n">only</span> 的存在，保证了系统不会存在多余的索引元素记录；当所有 <span class="n">delete</span> <span class="n">only</span> 状态转移到 <span class="n">write</span> <span class="n">only</span> 状态，从这时起，所有节点的数据的变更都能正确地更新索引。
+</span></span><span class="line"><span class="cl">    之后进入 <span class="n">data</span> <span class="n">reorg</span> 阶段，<span class="n">reorg</span> 要做的就是取到当前时刻的 <span class="n">snapshot</span>，为每条数据补写对应的索引记录。
+</span></span><span class="line"><span class="cl">    <span class="n">reorg</span> 开始之后数据可能发生变更，这种情况下底层 <span class="n">Spanner</span> 提供的一致性能保证（时间戳判断），<span class="n">reorg</span> 的写入操作要么失败（说明新数据已提前写入），要么被更新数据覆盖。
+</span></span><span class="line"><span class="cl"><span class="m">5</span><span class="p">)</span> <span class="n">write</span> <span class="n">only</span> <span class="o">+</span> <span class="n">public</span>
+</span></span><span class="line"><span class="cl">    节点对应 <span class="n">reorg</span> 完成时，索引重建完成，进入 <span class="n">public</span> 状态。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+<!-- copyright -->
+<div class="admonition">
+  <div class="admonition-content">
+    <ul>
+      <li>版权声明：如需转载或引用，请附加本文链接并注明来源。</li>
+    </ul>
+  </div>
+</div>
+<!-- copyright -->
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://mzyee.github.io/tags/paperread/">PaperRead</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://mzyee.github.io/posts/mysql/mvcc/">
+    <span class="title">下一页 »</span>
+    <br>
+    <span>InnoDB MVCC 逻辑学习</span>
+  </a>
+</nav>
+
+  </footer>
+<div>
+  <div class="pagination__title">
+    <span class="pagination__title-h" style="font-size: 20px;">💬 评论</span>
+    <hr />
+  </div>
+  <div id="tcomment"></div>
+  <script src="https://cdn.staticfile.org/twikoo/1.6.25/twikoo.all.min.js"></script>
+  <script>
+    twikoo.init({
+      envId: "https://mzyeee.netlify.app/.netlify/functions/twikoo",  
+      el: "#tcomment",
+      lang: 'zh-CN',
+      region: 'ap-hongkong',
+      path: window.TWIKOO_MAGIC_PATH || window.location.pathname,
+    });
+  </script>
+</div>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://mzyee.github.io">MZY&#39;s Blog</a></span>
+    <span>
+        | Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a>
+    </span>
+    <span id="busuanzi_container">
+        | Viewer
+        <span class="fa fa-user"></span> <span id="busuanzi_value_site_uv"></span>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '复制';
+
+        function copyingDone() {
+            copybutton.innerHTML = '已复制！';
+            setTimeout(() => {
+                copybutton.innerHTML = '复制';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

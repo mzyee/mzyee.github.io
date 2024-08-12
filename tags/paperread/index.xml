@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on MZY&#39;s Blog</title>
-    <link>https://mzyee.github.io/posts/</link>
-    <description>Recent content in Posts on MZY&#39;s Blog</description>
+    <title>PaperRead on MZY&#39;s Blog</title>
+    <link>https://mzyee.github.io/tags/paperread/</link>
+    <description>Recent content in PaperRead on MZY&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 11 Aug 2024 15:10:12 +0800</lastBuildDate><atom:link href="https://mzyee.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Aug 2024 15:10:12 +0800</lastBuildDate><atom:link href="https://mzyee.github.io/tags/paperread/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Online, Asynchronous Schema Change in F1</title>
       <link>https://mzyee.github.io/posts/paper_read/f1_online_async_sc/</link>
@@ -14,15 +14,6 @@
       
       <guid>https://mzyee.github.io/posts/paper_read/f1_online_async_sc/</guid>
       <description>Online, Asynchronous Schema Change in F1</description>
-    </item>
-    
-    <item>
-      <title>Docker 使用简介</title>
-      <link>https://mzyee.github.io/posts/linux/docker/</link>
-      <pubDate>Fri, 08 Mar 2024 10:52:08 +0800</pubDate>
-      
-      <guid>https://mzyee.github.io/posts/linux/docker/</guid>
-      <description>Docker 使用简介</description>
     </item>
     
   </channel>
